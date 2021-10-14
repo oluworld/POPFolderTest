@@ -26,11 +26,11 @@ oixfs = F().oixfs
 server, user, passwd = 'localhost', 'user', 'secret'
 
 def readdef ():
-	f = open ('def')
+	f = open('def')
 	global server, user, passwd
 	server = f.readline().strip()
-	user   = f.readline()[:-1]
-	passwd = f.readline()[:-1]
+	user   = f.readline().rstrip()
+	passwd = f.readline().rstrip()
 	f.close()
 
 def xx_do_login ():
