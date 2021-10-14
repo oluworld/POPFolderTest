@@ -247,8 +247,8 @@ class POPFolder(iDirHandler):
 #		print "---------"
 #		print self.SRVLIST
 #		print "---------"
-		if self.SRVLIST.has_key(srvname):
-			port, authinfo, refcnt, inst = self.SRVLIST[srvname]
+		if self.SRVLIST.has_key(host_port_user_triple):
+			port, authinfo, refcnt, inst = self.SRVLIST[host_port_user_triple]
 #			self.SRVLIST[srvname] = (port, authinfo, refcnt, inst)
 			return inst, refcnt
 		else:
@@ -268,7 +268,8 @@ class POPFolder(iDirHandler):
 				elif authinfo[2] == 'writeable':
 					flag=1
 			if flag==0:
-				self.SRVLIST[srvname+'-'+u] = (110, authinfo, 1, s)
+				# self.SRVLIST[srvname+'-'+u] = (srvport, authinfo, 1, s)
+				self.SRVLIST[host_port_user_triple] = (srvport, authinfo, 1, s)
 			return s, 1
 	
 	def open(self, desc, perms, flags):
@@ -319,5 +320,4 @@ class POPFolder(iDirHandler):
 ##		
 ##	def handle(self, evt):
 ##		pass
-	
 	
