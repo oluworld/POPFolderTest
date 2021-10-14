@@ -1,5 +1,7 @@
 #from AppWorks.File.POPFolder import POPFolder
 #from AppWorks.File import Perms, Flags
+from AppWorks.DBi.Server import AwxDBiServer
+from AppWorks.Util.AwxDBi import AwxDBi
 from File.POPFolder import POPFolder
 from File import Perms, Flags
 from etoffiutils import quickWrite, ensure_directory_present, true, false
@@ -11,7 +13,14 @@ from File.Desc_ import Desc
 
 class F(App):
 	def __init__(self):
-		oixfs = System(self)
+		self.oixfs = System(self)
+		# self._my_info_server = AwxDBi()
+		# self._setBasicInformation(self.oixfs, self._my_info_server)
+	def get_shared_information_server(self):
+		return AwxDBiServer()
+	def get_shared_file_server(self):
+		return None
+
 oixfs = F().oixfs
 
 server, user, passwd = 'localhost', 'user', 'secret'
