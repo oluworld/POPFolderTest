@@ -1,3 +1,4 @@
+from AppWorks.File import Flags
 from DirHandler import iDirHandler
 from poplib import POP3
 from etoffiutils import *
@@ -83,7 +84,20 @@ class POPFolderHandle(Handle):
 		self.extra.msg = MMSMessage(msg, U, resp, octets)
 		print 'curHandle.extra:', self.extra
 
+
 g_POPFolder_SRVLIST = {}
+
+
+class ServerLoginData(object):
+	def __init__(self, server, port=110, username=None, password=None):
+		self.password = password
+		self.username = username
+		self.port = port
+		self.server = server
+
+	__slots__ = ('server', 'port', 'username', 'password')
+
+
 class POPFolder(iDirHandler):
 	def __init__(self):
 		self.SRVLIST = g_POPFolder_SRVLIST
@@ -105,7 +119,7 @@ class POPFolder(iDirHandler):
 	def enumerateFirstByName(self, spec):
 		""" spec:File.Name -> File.Desc """
 		s = string_split (spec, '/')
-		print 'stat %s (%s)' %  (spec, s[3])
+		print 'stat %s (%s)' % (spec, s[3])
 		rv = Desc (spec)
 		rv.host = self
 		return rv
@@ -147,11 +161,24 @@ class POPFolder(iDirHandler):
 	def _extract(self, ll):
 		sl = string_split (ll, '@')
 		#print '555 _extract:',sl
-		if len (sl) > 1:
-			rv = (sl[1],sl[0])
+
+		def get_host_port(s):
+			hp = string_split(s, ":")
+			if len(hp) == 2:
+				return hp[0], int(hp[1])
+			elif len(hp) == 1:
+				return hp[0], 110
+			else:
+				raise "Malformed host/port combo", s
+
+		if len(sl) > 1:
+			host, port = get_host_port(sl[1])
+			rv = ServerLoginData(host, port, username=sl[0])
 		else:
-			rv = (sl[0],None)
+			host, port = get_host_port(sl[0])
+			rv = ServerLoginData(host, port)
 		return rv
+	
 	def _x_extract(self, ll):
 		import re
 		print 'matching:',ll
@@ -168,7 +195,8 @@ class POPFolder(iDirHandler):
 	def __int_open(self, desc, perms, flags, extra): #private, please
 		ll = desc.getFullName ().split('/')[1:]
 		self.__validate_method(ll[0])
-		srvname = self._extract (ll[1])[0]
+		server_login_data = self._extract(ll[1])
+		srvname = server_login_data.server
 		
 		print "** __int_open ", desc.getFullName()
 
@@ -204,14 +232,18 @@ class POPFolder(iDirHandler):
 				method_ = "writeable"
 			curHandle = POPFolderLoginHandle()
 			curHandle.set(desc, self, None, StreamState.Opening, perms, flags)
-			curHandle.extra = apply(extra, (curHandle,self.__int_getserver(srvname, (accval[0],accval[1],method_))))
+			curHandle.extra = apply(extra, (curHandle,self.__int_getserver(server_login_data, (accval[0],accval[1],method_))))
 			curHandle.myState = StreamState.Closed
 			return curHandle
 		else:
 			raise POPFolderError("Invalid AccessType Specified")
 
-	def __int_getserver(self, srvname, authinfo=None):
-		print "** getserver", srvname
+	def __int_getserver(self, sld, authinfo=None):
+		srvname = sld.server
+		srvport = sld.port
+		host_port_user_triple = (srvname, srvport, sld.username)
+		
+		print "** getserver", srvname, srvport
 #		print "---------"
 #		print self.SRVLIST
 #		print "---------"
@@ -221,8 +253,8 @@ class POPFolder(iDirHandler):
 			return inst, refcnt
 		else:
 			#/pop/[user[:passwd]]@server[:port]/
-			srvname = self._extract (srvname)[0]
-			s = POP3(srvname) # vv port authinfo refcnt instance
+			#srvname = self._extract (srvname)[0]
+			s = POP3(srvname, srvport) # vv port authinfo refcnt instance
 			u = '(DEF)'
 			flag = 0
 			if authinfo != None:
