@@ -47,7 +47,8 @@ def xx_write_out (n, lines):
 	quickWrite('out/%d'%n, lines)
 
 def do_login ():
-	dd = oixfs.enumerateFirstByName ('/pop/'+server+'/login/'+user+'/'+passwd)
+	login_path = '/pop/' + server + '/login/' + user + '/' + passwd
+	dd = oixfs.enumerateFirstByName (login_path)
 	handler = dd.host
 	ff = Flags()
 	login_handle = handler.open(dd, Perms.Read, ff)
