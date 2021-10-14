@@ -1,0 +1,20 @@
+%%
+pr0n-5800
+shell
+0
+echo hi
+%%
+pr0n-5801
+shell
+0
+echo lo
+%%
+sync_newsgroup-comp.foo-12345678
+invocation
+5
+invokable-class SyncNewsGroup
+group_name comp.foo
+server news
+async true
+interval 5
+%%

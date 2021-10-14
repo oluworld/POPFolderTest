@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+import string
+import os
+from etoffiutils import *
+
+def read_job(jfi):
+	l = jfi.readline()[:-1]
+	if l == '%%':
+		l = jfi.readline()[:-1]
+
+	id = l
+	type = jfi.readline()[:-1]
+	nspec = int( jfi.readline()[:-1] )
+	# SPECS: Depends-On, Priority, System-Load
+	specl = []
+	for each in range(1, nspec):
+		specl.append( jfi.readline()[:-1] )
+	k = []
+	l = jfi.readline()[:-1]
+	while l != '%%':
+		k.append( l )
+		l = jfi.readline()[:-1]
+	return (id, nspec, specl, type, k)
+
+JOB_ID = 0
+JOB_NSPEC = 1
+JOB_SPECLIST = 2
+JOB_TYPE = 3
+JOB_CMDLIST = 4
+
+def do_job(job):
+	if job[JOB_TYPE] == 'shell':
+		fn = "JM-%d" % inc_until_nofile(1, "JM-", '')
+		quickWrite(fn, job[JOB_CMDLIST])
+		rv = os.system('sh %s' % fn)
+		rv2 = os.system('rm %s' % fn)
+		if not rv or not rv2:
+			return 0
+		return 1
+	return 0
+
+def write_job(job, jfo):
+	s = [ '%%', job[JOB_ID], str(job[JOB_TYPE]), str(job[JOB_NSPEC]) ]
+	s2 = combine_lists(job[JOB_SPECLIST], job[JOB_CMDLIST])
+	s = combine_lists(s, s2)
+
+	print s
+	
+	jfo.writelines(map(lambda e: "%s\012" % str(e), s))
+
+
+def main():
+	jfi = open('jobs.dat', 'r')
+	jfo = open('jobs-done.dat', 'a+')
+	try:
+		deferred_jobs = []
+		job = read_job(jfi)
+
+		if do_job(job):
+			write_job(job, jfo)
+		else:
+			deferred_jobs.append(job)
+
+		jfo.close()
+
+		jfo = open('jobs.dat.o', 'w')
+		for each in deferred_jobs:
+			write_job(each, jfo)
+		jfo.write('%%\012')
+		jfo.writelines(jfi.readlines())
+	except:
+		pass
+	jfi.close()
+	jfo.close()
+
+	os.system('sh -c "rm -f jobs.dat && mv jobs.dat.o jobs.dat"')
+
+main()

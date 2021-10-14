@@ -1,0 +1,49 @@
+from AwxObject import *
+from DBiValue import *
+import string
+
+class AwxDBi(AwxObject):
+	EnumFlat = 0
+	EnumRecursive = 1
+
+	def enum(self, Key, kind = EnumRecursive):
+		if Key == '/local/DBi/.config/email/sources':
+			return [DBiValue('%s/001' % Key, '', None, None)]
+		ret = {}
+
+		for each in self.values.keys():
+			X = self.values[each].path
+			if nequals(X, Key):
+				if len(string.split(X, '/')) == len(string.split(Key, '/'))+1:
+#					ret[string.split(Key, '/')] == self.values[each]
+					ret[each] = self.values[each]
+
+# recursiveness not really supported yet
+		if kind == AwxDBi.EnumRecursive:
+			pass
+		else:
+			a = []
+			for each in ret.keys():
+				a.append(ret[each])
+			ret = a
+
+		return ret
+
+	def getStr(self, Key, root = ''):
+		print 'DBi Request String: ', root, '\t', Key
+		return self.values[Key].value #['%s/%s' % (root,Key)]
+
+	def __init__(self):
+		self.values = {}
+
+		A1 = 'y:/data/DBi/.config/email/sources/001.DBi'
+		A2 = '/local/DBi/.config/email/sources/001'
+
+		stdentries = dumptextfile(A1, true)
+
+		for each in stdentries:
+			if len(each):
+				s = string.split(each)
+			self.values[s[0]] = DBiValue('%s/%s' % (A2, s[0]), s[1], None, None)
+
+#eof

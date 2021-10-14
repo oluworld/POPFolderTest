@@ -1,0 +1,171 @@
+
+import SocketServer
+import string
+import sys
+import socket
+import mimetools
+
+class WereOver(Exception):
+	pass
+
+class SMTPServer(SocketServer.TCPServer):
+	allow_reuse_address = 1	# Seems to make sense in testing environment
+
+	def server_bind(self):
+		"""Override server_bind to store the server name."""
+		SocketServer.TCPServer.server_bind(self)
+		host, port = self.socket.getsockname()
+		self.server_name = socket.getfqdn(host)
+		self.server_port = port
+
+ofile = open('smtp_log', 'a+')
+class SMTPRequestHandler(SocketServer.StreamRequestHandler):
+
+	def put(self, text):
+		self.wfile.write("%s\r\n" % text)
+
+	def aget(self):
+		return self.rfile.readline()
+	def get(self):
+		F = self.aget()
+		ofile.write("%s" % F)
+		ofile.flush()
+		return F
+		
+	def parse_request(self):
+		self.request_version = version = "HTTP/0.9" # Default
+
+		requestline = self.raw_requestline
+		if requestline[-2:] == '\r\n':
+			requestline = requestline[:-2]
+		elif requestline[-1:] == '\n':
+			requestline = requestline[:-1]
+		self.requestline = requestline
+		words = string.split(requestline)
+
+		self.command = string.upper(words[0])
+		self.rest = words[1:]
+		
+		return 1
+
+##	MessageClass = mimetools.Message
+
+	def IDENTIFY(self):
+		self.put("220 Hello, OluWorld! SMTPServer")
+
+	def handle(self):
+		self.IDENTIFY()
+		self.raw_requestline = self.get()
+
+		self.MSG = ''
+
+		try:
+			while self.parse_request():
+				mname = 'do_' + self.command
+				if not hasattr(self, mname):
+					self.send_error(501, "Unsupported method (%s)" % `self.command`)
+				else:
+					method = getattr(self, mname)
+					method()
+
+				self.raw_requestline = self.get()
+		except WereOver:
+			pass
+
+	def do_HELO(self):
+		try:
+			server_name = socket.gethostname()
+			self.put("250 %s ESMTP" % server_name)
+#			self.put("250 Well howdy, %s" % self.rest[0])
+		except IndexError:
+			self.put("xxx What's your name pretty?")
+			self.were_done=1
+	def do_DBUG(self):
+		O=''
+		try:
+			O = "FROM\t%s\nTO\t%s" % (self.FROM, self.TO)
+		except AttributeError:
+			O = "Unspecified attributes"
+		self.put(O)
+	def do_MAIL(self):
+		if len(self.rest[0]) > 5:
+			self.FROM = self.rest[0][5:]
+		else:
+			self.FROM = self.rest[1]
+		self.put("250 OK")
+	def do_RCPT(self):
+		try:
+			if self.TO != '':
+				self.put("552 Recipient storage full, try again in another transaction")
+				return
+		except AttributeError:
+			pass
+		if len(self.rest[0]) > 5:
+			self.TO = self.rest[0][5:]
+		else:
+			self.TO = self.rest[1]
+		self.put("250 OK")
+	def do_DATA(self):
+		try:
+			self.FROM
+		except AttributeError:
+			self.put("503 But I don't even know you")
+			return
+		try:
+			self.TO
+		except AttributeError:
+			self.put("503 Right, but where's this thing going?")
+			return
+
+#		self.put("354 Let's Rock")
+		self.put("354 Start mail input; end with <CRLF>.<CRLF>")
+		
+		while 1:
+			line = self.get()
+			if not line:
+				raise WereOver()
+			if line == '.\r\n':
+				done = 1
+				break
+			if line[:2] == '..':
+				line = line[1:]
+			self.MSG = self.MSG + line
+		
+		try:
+			done
+			import md5, time
+			from etoffiutils import quickAppend, true 
+			quickAppend(md5.new(`time.time()`).hexdigest(), [self.FROM, `self.TO`, ' ' ]+[self.MSG], true)
+		except NameError:
+			self.put("550 Why don't you ever follow rules?")
+			return
+		self.put("250 OK")
+		
+	def do_QUIT(self):
+		self.put("221 I didn't like you anyway")
+		raise WereOver() #(1)
+
+	def send_error(self, code, message=None):
+		e = `code` + " "
+		if message:
+			e = e + message
+
+		self.put(e)
+
+def test(HandlerClass = SMTPRequestHandler, ServerClass = SMTPServer):
+	if sys.argv[1:]:
+		port = string.atoi(sys.argv[1])
+	else:
+		port = 25
+
+	server_address = ('', port)
+
+	smtpd = ServerClass(server_address, HandlerClass)
+
+	print "Serving on port", port, "..."
+	smtpd.serve_forever()
+
+
+if __name__ == '__main__':
+	test()
+

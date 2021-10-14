@@ -1,0 +1,72 @@
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (13) PASS secret<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) STAT<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (13) PASS secret<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) STAT<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (11) USER test<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (15) PASS _passwd_<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) LIST<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (11) USER test<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (15) PASS _passwd_<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) LIST<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (11) USER test<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (15) PASS _passwd_<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) LIST<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi<crlf>
+[Sx] (19) +OK Send Password<crlf>
+[cx] (10) PASS foo<crlf>
+[Sx] (14) +OK Login OK<crlf>
+[cx] (8) RETR 1<crlf>

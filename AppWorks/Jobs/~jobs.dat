@@ -1,0 +1,12 @@
+pr0n-5800
+shell
+0
+wget http://foobar.com/img/as152.jpg
+mv as152.jpg 5800.jpg
+%%
+pr0n-5801
+shell
+0
+wget http://foobar.com/img/as153.jpg
+mv as153.jpg 5801.jpg
+

@@ -1,0 +1,131 @@
+from DirHandler import iDirHandler
+from poplib import POP3
+from etoffiutils import *
+from AppWorks.File import *
+
+"""
+implement a pop folder. will be used in AwxMail.
+
+"""
+
+class POPFolderData:
+	def __init__(self, folder, server):
+		self.folder = folder
+		self.server = server
+class POPFolderWritableData(POPFolderData):
+	pass
+
+class POPFolder(iDirHandler):
+	def __init__(self):
+		self.SRVLIST = {}
+	def canOpen(self, path, perm):
+		""" path:File.Path, perm:File.Perms -> bool
+			/pop/$server/$msgnum
+		"""
+		if path[:5] == '/pop/' and len(path)>5:
+			return true
+		else:
+			return false
+
+	def enumerate(self, spec):
+		""" spec:String -> List<File.Desc> """
+		pass
+
+	def enumerateFirstByName(self, spec):
+		""" spec:File.Name -> File.Desc """
+		pass
+
+	def insert(self, desc):
+		""" -> bool """
+		if getParam('forward-smtp'):
+			h = oixfs.getHandlerForPathOrNil(getParam('forward-server'))
+			if h:
+				return h.insert(desc)
+		else:
+			return false
+		
+	def unlink(self, desc):
+		""" -> bool """
+		f = Flags()
+		f.excl = true
+		h = open(desc, Perms.Read, f)
+		if h:
+			return h.extra.dele()
+		return false
+
+	def _validate_method(self, meth):
+		#if meth != 'pop': raise InvalidMethodException(self, meth)
+		pass
+
+	def __int_open(self, desc, perms, flags, extra): #private, please
+		ll = desc.path.split('/')[1:]
+		self._validate_method(ll[0])
+		srvname = ll[1]
+
+		self.curHandle = Handle(desc, self, None, StreamState.Opening, perms, flags)
+		self.curHandle.extra = apply(extra, (self.curHandle,self.__int_getserver(desc.path)))
+		self.curHandle.myState = StreamState.Acceptable
+		
+		return self.curHandle
+
+	def __int_getserver(self, path):
+		srvname=path		
+		if self.SRVLIST.has_key(srvname):
+			port, authinfo, refcnt, inst = self.SRVLIST[srvname]
+#			self.SRVLIST[srvname] = (port, authinfo, refcnt, inst)
+			return inst, refcnt
+		else:
+			#/pop/[user[:passwd]]@server[:port]/
+			s = POP3(srvname) # vv port authinfo refcnt instance
+			self.SRVLIST[srvname] = (110, None, 1, s)
+			return s, 1
+	
+	def open(self, desc, perms, flags):
+		""" -> File.Handle """
+		if perms == Perms.Read:
+			return self.__int_open(desc, perms, flags, POPFolderData)
+		elif perms == Perms.Write:
+			return self.__int_open(desc, perms, flags, POPFolderWriteableData)
+		else:
+			return None
+		
+	def reopen(self, handle, perms, flags):
+		""" -> File.Handle """
+		if perms == handle.perms and flags == handle.flags:
+			return handle
+		
+		ret = open(handle.desc, perms, flags) # what if
+		self.close(handle) # what kind of exception handling here?
+		return ret
+	
+	def close(self, handle):
+		""" -> bool """
+		if handle.server == None:
+#			raise err("already closed")
+			return false
+		port, authinfo, refcnt, inst = handle.server
+		if refcnt == 1:
+			del port, authinfo, inst, refcnt, handle, server
+			handle.server = None
+		return true
+		
+	def write(self, handle, data, size):
+		""" File.Handle ByteStream int -> int """
+		pass
+		
+	def read(self, handle, size):
+		""" File.Handle int -> ByteStream """
+		pass
+		
+	def seek(self, handle, amt, dir, pos):
+		""" handle:File.Handle amt:uint dir:(*forward*, backward) pos:(beg, end, *cur*) """
+		pass
+		
+##	def setParams(self, handle, params):
+##		""" handle:File.Handle params:?a """
+##		pass
+##		
+##	def handle(self, evt):
+##		pass
+	
+	

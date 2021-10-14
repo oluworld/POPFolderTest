@@ -1,0 +1,34 @@
+%%
+sync_newsgroup-comp.foo-12345689
+invocation
+7
+invokable-class SyncNewsgroup
+group_name alt.binaries.erotica.black.female
+server earth.hx.sonow.net
+interval 2
+sync_type start
+post-invokable OnetAddNewsgroupMessage
+post-invoke-options save-headers extract-contents #delete-orig
+%%
+sync_newsgroup-comp.foo-12345679
+invocation
+7
+invokable-class SyncNewsgroup
+group_name alt.binaries.erotica.male
+server earth.hx.sonow.net
+interval 2
+sync_type start
+post-invokable OnetAddNewsgroupMessage
+post-invoke-options store-in-filesystem mangle-server-name mangle-group-name save-headers
+%%%%
+sync_newsgroup-comp.foo-12345679
+invocation
+7
+invokable-class SyncNewsgroup
+group_name alt.binaries.erotica.male
+server earth.hx.sonow.net
+interval 2
+sync_type start
+post-invokable OnetAddNewsgroupMessage
+post-invoke-options store-in-filesystem mangle-server-name mangle-group-name save-headers
+%%

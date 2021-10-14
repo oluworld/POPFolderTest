@@ -1,0 +1,83 @@
+#import AwxDBi
+from DBiValue import *
+from MMSPOPSource import *
+from MMSTransfer import *
+from AwxDBi import *
+
+class NullUI:
+	def abort(self, msg):
+		pass
+
+	def tell(self, msg):
+		pass
+
+class ConsoleUI:
+	def abort(self, msg):
+		print 'ABORTING!!!\n\t', msg 
+
+	def tell(self, msg):
+		print '*** ', msg
+
+class MMSLoginError(Exception):
+	pass
+
+class MailChecker(AwxObject):
+	def checkmail(self, getting = 1):
+#		self.
+		Sources = []
+		Sources = self.myDBi.enum('/local/DBi/.config/email/sources', AwxDBi.EnumFlat)
+
+		for each in Sources:
+			uimsg = 'getting mail from ' + self.myDBi.getStr('name', each.path)
+			self.ui.tell(uimsg)
+
+			clazz = ("MMS%sSource" % self.myDBi.getStr( 'type', each.path ))
+			src = eval(clazz + '()')
+
+			if not src:
+				self.ui.abort("No such source" + clazz)
+				continue
+
+			try:
+				src.setFlags(self.myDBi.enum(each.path, AwxDBi.EnumRecursive))
+				src.login(self.ui, getting)
+			except MMSLoginError, e:
+				self.ui.abort(e.what())
+				continue
+
+			newmsgs, totmsgs = src.getMessageCount()  # (new, all) 
+
+			if newmsgs == 0:
+				self.ui.tell('No new messages. %d old messages' % totmsgs)
+				continue
+			else:
+				self.ui.tell('%d new message(s)' % newmsgs)
+
+#			if not getting:
+#				continue
+
+			T = MMSTransfer(each)
+
+			for msgs in xrange(1, newmsgs + 1):
+				self.ui.tell("Retrieving %d of %d" % (msgs, newmsgs) )
+				msg = src.getMsg(msgs, self.deleting)
+
+#				if not msg:
+#					raise errEmptyMessage(self, src) # "MMSMailChecker::checkmail"
+
+				self.onGetMsg(msg, T)
+
+			self.ui.tell('Finished ' + uimsg)
+
+	def __init__(self, deleting = 1, ui = None):
+		self.deleting = deleting
+		self.myDBi = AwxDBi()
+		if ui == None:
+			self.ui = ConsoleUI()
+		else:
+			self.ui = ui
+
+	def onGetMsg(self, msg, T):
+		T.transfer(self.ui, msg)
+
+#eof

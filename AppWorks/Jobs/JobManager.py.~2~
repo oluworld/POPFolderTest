@@ -1,0 +1,174 @@
+#!/usr/bin/env python
+import string
+import os
+from etoffiutils import *
+from AppWorks.Services.RCDBiHandler import SplitLine, getQuoted
+from Job import Job
+
+finished_reading = 0
+
+class FileReader:
+	def __init__ (self):
+		self.backed = None
+		self.at_end = 0
+	def open (self, name):
+		self.name = name
+		self.fo = open (name, 'r')
+	def readlines (self):
+		return self.fo.readlines()
+	def readline (self):
+#		print 'in readine'
+#		print '--------------'
+#		print 'backed=', self.backed
+#		print 'at_end=', self.at_end
+#		print '--------------'
+		if self.at_end == 1:
+			raise Foo()
+		if self.backed != None:
+			t = self.backed
+			self.backed = self.fo.readline()
+#			print 'just read line', self.backed
+			if self.backed in (None, ''):
+				self.at_end = 1
+#			print 'returning =', t
+			return t
+		else:
+			t = self.fo.readline()
+			self.backed = self.fo.readline()
+#			print 'returning =', t
+			return t
+	def close(self):
+		return self.fo.close()
+class Foo (Exception):
+	def __str__(self):
+		return "hello from foo"
+#	pass
+
+class JobManager:
+	def get_next (self):
+#		self.msg_q.append()
+		if self.msg_q == []:
+			global global_if
+			return read_job(global_if)
+		else:
+			r = self.msg_q[0]
+			self.msg_q = self.msg_q[1:]
+			return r
+	def insert (self, job):
+		self.msg_q.append (job)		
+			
+def read_job(jfi):
+	if finished_reading == 1:
+		return None
+	(id, nspec, specl, type, k) = ('', 0, {}, '', [])
+	try:
+			l = jfi.readline()[:-1]
+			if l == '%%':
+				l = jfi.readline()[:-1]
+		
+			id = l
+			type = jfi.readline()[:-1]
+			nspec = int( jfi.readline()[:-1] )
+			# SPECS: Depends-On, Priority, System-Load
+			for each in range(0, nspec-1):
+				l = jfi.readline()[:-1]
+				n, v = SplitLine(l)
+				specl[n]=v
+			k = []
+			l = jfi.readline()[:-1]
+			while l != '%%':
+				k.append( l )
+				l = jfi.readline()[:-1]
+	except Foo, e:
+		global finished_reading
+		finished_reading = 1
+#		print 'exception 0', e
+#		print "finished_readling = 1, id =", id 		
+	global finished_reading
+	if finished_reading == 1:
+		rv = None
+	else:
+		rv = Job(id, nspec, specl, type, k)
+	return rv
+
+def do_job(job):
+#	print 'job_type='+job.job_type
+	if job.job_type == 'shell':
+		fn = "JM-%d" % inc_until_nofile(1, "JM-", '')
+		quickWrite(fn, job.params)
+		rv = os.system('sh %s' % fn)
+		rv2 = os.system('rm %s' % fn)
+		if not rv or not rv2:
+			return 0
+		return 1
+	if job.job_type == 'invocation':
+		ss = job.spec_list['invokable-class']
+#		for eachx in job.spec_list.keys():
+#			print m, eachx, "\t", job.spec_list[eachx]
+#			m = m+1
+##		if not job.spec_list.has_key('invokable-class'):
+##			print "oops"
+		# <begin_whoa>
+		mm = __import__('AppWorks.Invocation.'+ss)
+#		print dir(mm.__dict__['Invocation'].__dict__[ss])
+		kl = mm.__dict__['Invocation'].__dict__[ss]
+		# </end_whoa>
+		if kl:
+			return kl.do_job(job)
+
+	return 0
+
+def spec_list_to_list(sl):
+	r = []
+	for each in sl.keys():
+		r.append (each + ' ' + sl[each])
+	return r
+	
+def write_job(job, jfo):
+	s = [ '%%', job.id, str(job.job_type), str(job.nspec) ]
+	s2 = combine_lists(spec_list_to_list(job.spec_list), job.params)
+	s = combine_lists(s, s2)
+
+#	print 's=',s
+	
+	jfo.writelines(map(lambda e: "%s\012" % str(e), s))
+
+
+global_if = FileReader()
+global_if.open('jobs.dat')
+
+def main(jfi = global_if):
+#	jfi = open('jobs.dat', 'r')
+	jfo = open('jobs-done.dat', 'a+')
+	try:
+		deferred_jobs = []
+
+		try:
+			while 1:
+				job = read_job(jfi)
+
+				if job:
+					if do_job(job):
+						write_job(job, jfo)
+					else:
+						deferred_jobs.append(job)
+				else:
+					break
+		except KeyboardInterrupt: #Exception, e:
+			print 'exception 1', e
+		jfo.close()
+
+		jfo = open('jobs.dat.o', 'w')
+		for each in deferred_jobs:
+			write_job(each, jfo)
+		jfo.write('%%\012')
+		jfo.writelines(jfi.readlines())
+	except KeyboardInterrupt: #Exception, e:
+		print 'exception 2', e
+	jfi.close()
+	jfo.close()
+
+#	os.system('sh -c "rm -f jobs.dat && mv jobs.dat.o jobs.dat"')
+
+if __name__ == '__main__':
+	main()

@@ -1,0 +1,41 @@
+import sys, os
+from MMSTransfer import MMSTransfer
+#from AwxDBi import AwxDBi
+from AwxDBiServer import DBiServer
+from etoffiutils import dumptextfile, true, false
+
+def main():
+	Root = '/local/DBi/.config/email/sources'
+#	myDBi = AwxDBi(Root)
+#	Sources = myDBi.enum('', AwxDBi.EnumFlat)
+##	Sources = DBiServer.enum(Root)
+##	print Sources
+
+	myDBi=DBiServer
+
+	fr=myDBi.getStr(Root+'/'+sys.argv[1]+'/folderroot').value
+	print fr
+	"""	f=''
+	for each in Sources:
+		f=each.path+'/name'
+		print 'XXf = ', f
+		if myDBi.getStr(f)==sys.argv[3]:
+			T = MMSTransfer(f)
+			for each in sys.argv[4:]:
+				r = dumptextfile(os.path.join(T.fr,sys.argv[2],each))
+				print r
+				T.writeMsg(r, sys.argv[1])
+				return 
+
+	print 'dir not found: %s' % sys.argv[3]
+"""
+	T = MMSTransfer(fr)
+	for each in sys.argv[4:]:
+		fn = os.path.join(T.fr,sys.argv[2],each+'.msg')
+		r  = dumptextfile(fn)
+##		print r
+		T.writeMsg(r, sys.argv[3], false)
+		T.writeMsg(r, '.moved-trash', false)
+		os.unlink(fn)
+	
+main()

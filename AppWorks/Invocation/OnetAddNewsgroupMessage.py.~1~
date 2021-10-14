@@ -1,0 +1,64 @@
+from etoffiutils import quickWrite, b64_encode, ensure_directory_present, true
+from AppWorks.Jobs import Job
+import time
+
+mangle_name = b64_encode
+
+def print_spec_list(sl):
+	for each in sl.keys():
+		print each + '\t\t' + sl[each]
+
+def extract_headers_from_message (msg):
+	r = []
+	for each in msg:
+		print each
+		if each == '':
+			break
+		r.append (each)
+	return r
+
+def get_news_msg_st_root ():
+	return 'c:/_'
+	
+def do_job(j, jm):
+	print 'OnetAddNewsgroupMessage ======================================================='
+
+#	print j.job_type
+	print_spec_list (j.spec_list)
+
+	msg_lines = j.params[0]	
+	oix_attrs = j.params[1]	
+	
+	server = j.spec_list['server']
+	msgnum = j.spec_list['msgnum']
+	grpnam = j.spec_list['group_name']
+
+	xserver, xgrpnam = server, grpnam
+
+#	s = j.spec_list['options']
+	l = j.spec_list['options'].split()
+
+##	print oix_attrs
+	
+	if len(l):
+
+#		store-in-filesystem
+#		mangle-server-name
+#		mangle-group-name
+#		save-headers
+
+		if "store-in-filesystem" in l:
+			if "mangle-server-name" in l:
+				xserver = mangle_name (server)
+			if "mangle-group-name" in l:
+				xgrpnam = mangle_name (grpnam)
+
+			dl = '%s/%s/%s/' % (get_news_msg_st_root(), xserver, xgrpnam)
+			ensure_directory_present (dl)
+			sl = dl + msgnum
+			quickWrite (sl, msg_lines, true)
+			
+			if "save-headers" in l:
+				quickWrite (sl+".headers", extract_headers_from_message (msg_lines), true)
+
+	

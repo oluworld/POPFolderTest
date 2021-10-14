@@ -1,0 +1,175 @@
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password<crlf>
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server<crlf>
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password<crlf>
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK<crlf>
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER ETOFFI
+[Sx] (19) +OK Send Password
+[cx] (10) PASS FOO
+[Sx] (14) +OK Login OK
+[cx] (8) STSAT
+[Sx] (39) -ERR Unsupported method ('STS\010AT')
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password
+[cx] (10) PASS foo
+[Sx] (14) +OK Login OK
+[cx] (6) LIST
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (6) list
+[Sx] (33) -ERR You would do well to login
+[Sx] (28) +OK 3 messages (10 octets)
+[Sx] (9) +OK 1 3
+[Sx] (9) +OK 2 3
+[Sx] (9) +OK 3 3
+[Sx] (3) .
+[cx] (6) stat
+[Sx] (33) -ERR You would do well to login
+[Sx] (10) +OK 3 10
+[cx] (5) nop
+[Sx] (33) -ERR Unsupported method ('NOP')
+[cx] (6) noop
+[Sx] (6) +OK 
+[cx] (8) delete
+[Sx] (36) -ERR Unsupported method ('DELETE')
+[cx] (5) del
+[Sx] (33) -ERR Unsupported method ('DEL')
+[cx] (7) erase
+[Sx] (35) -ERR Unsupported method ('ERASE')
+[cx] (4) rm
+[Sx] (32) -ERR Unsupported method ('RM')
+[cx] (6) help
+[Sx] (34) -ERR Unsupported method ('HELP')
+[cx] (6) dele
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (6) list
+[Sx] (33) -ERR You would do well to login
+[Sx] (28) +OK 3 messages (10 octets)
+[Sx] (9) +OK 1 3
+[Sx] (9) +OK 2 3
+[Sx] (9) +OK 3 3
+[Sx] (3) .
+[cx] (8) retr 1
+[Sx] (33) -ERR You would do well to login
+[Sx] (14) +OK 3 octets
+[Sx] (39) X-UIDL: 977571029.26552.tango,S=1767
+
+[Sx] (87) Return-Path: <sentto-1234907-4967-977570766-etoffi=softhome.net@returns.onelist.com>
+
+[Sx] (36) Delivered-To: etoffi@softhome.net
+
+[Sx] (73) Received: (qmail 26545 invoked by uid 417); 23 Dec 2000 11:30:29 -0000
+
+[Sx] (49) Received: from ei.egroups.com (64.211.240.237)
+
+[Sx] (63)   by mx0b.softhome.net with SMTP; 23 Dec 2000 11:30:29 -0000
+
+[Sx] (90) X-eGroups-Return: sentto-1234907-4967-977570766-etoffi=softhome.net@returns.onelist.com
+
+[Sx] (86) Received: from [10.1.4.55] by ei.egroups.com with NNFMP; 23 Dec 2000 11:26:06 -0000
+
+[Sx] (40) X-Sender: John_Maddock@compuserve.com
+
+[Sx] (37) X-Apparently-To: boost@eGroups.com
+
+[Sx] (60) Received: (EGP: mail-6_3_1_3); 23 Dec 2000 11:26:05 -0000
+
+[Sx] (75) Received: (qmail 29526 invoked from network); 23 Dec 2000 11:26:05 -0000
+
+[Sx] (95) Received: from unknown (10.1.10.142) by l9.egroups.com with QMQP; 23 Dec 2000 11:26:05 -0000
+
+[Sx] (120) Received: from unknown (HELO spdmgaad.compuserve.com) (149.174.206.137) by mta3 with SMTP; 23 Dec 2000 12:27:10 -0000
+
+[Sx] (160) Received: (from mailgate@localhost) by spdmgaad.compuserve.com (8.9.3/8.9.3/SUN-1.9) id GAA19541 for boost@eGroups.com; Sat, 23 Dec 2000 06:26:04 -0500 (EST)
+
+[Sx] (53) Sender: John Maddock <John_Maddock@compuserve.com>
+
+[Sx] (55) To: "INTERNET:boost@eGroups.com" <boost@eGroups.com>
+
+[Sx] (58) Message-ID: <200012230625_MC2-BFAA-8514@compuserve.com>
+
+[Sx] (51) From: John Maddock <John_Maddock@compuserve.com>
+
+[Sx] (20) MIME-Version: 1.0
+
+[Sx] (72) Mailing-List: list boost@egroups.com; contact boost-owner@egroups.com
+
+[Sx] (47) Delivered-To: mailing list boost@egroups.com
+
+[Sx] (19) Precedence: bulk
+
+[Sx] (59) List-Unsubscribe: <mailto:boost-unsubscribe@egroups.com>
+
+[Sx] (40) Date: Sat, 23 Dec 2000 06:25:32 -0500
+
+[Sx] (30) Reply-To: boost@egroups.com
+
+[Sx] (48) Subject: [boost] type_traits: remove_pointer?
+
+[Sx] (45) Content-Type: text/plain; charset=US-ASCII
+
+[Sx] (34) Content-Transfer-Encoding: 7bit
+
+[Sx] (3) 
+
+[Sx] (3) 
+
+[Sx] (71) >I notice there is a remove_reference<T> but no remove_pointer<T> in
+
+[Sx] (38) >type_traits. Oversight? Rationale?
+
+[Sx] (3) 
+
+[Sx] (78) Oversight, I'll make sure it gets added to the revised code (I hope to post
+
+[Sx] (45) a first draft soon, Christmas permitting).
+
+[Sx] (3) 
+
+[Sx] (10) - John.
+
+[Sx] (3) 
+
+[Sx] (3) .
+[cx] (13) user etoffi
+[Sx] (19) +OK Send Password
+[cx] (10) pass foo
+[Sx] (14) +OK Login OK
+[cx] (8) retr 1
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (8) retr 1
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (8) retr 1
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK
+[cx] (6) STAT
+[Sx] (33) +OK Hello, OluWorld! POP3Server
+[cx] (13) USER etoffi
+[Sx] (19) +OK Send Password
+[cx] (13) PASS secret
+[Sx] (14) +OK Login OK
+[cx] (6) STAT

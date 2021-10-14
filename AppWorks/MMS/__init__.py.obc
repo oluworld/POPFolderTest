@@ -1,0 +1,53 @@
+.origfile '/local/src/lang/python/MMS/__init__.py'
+.origlang python
+
+.transdate ...
+.author ...
+
+.namespace /MMS
+.modtype static-initialization
+
+.uses
+ * from Error
+.exports
+ REMOVE_FROM_SERVER, LEAVE_ON_SERVER, CONNECT_MODE, TEST_MODE, MMSSourceFactory
+.interface
+.var
+
+REMOVE_FROM_SERVER  = 1
+LEAVE_ON_SERVER     = 0
+
+CONNECT_MODE        = 1
+TEST_MODE           = 0
+
+.methods
+
+MMSSourceFactory:
+.uses
+	MMSSource from Source
+.rettype
+	MMSSouce
+.param 
+ 	clazzname
+.code
+	cmp clazzname, 'MMSPOPSource'
+	jne L1
+.uses
+	* from MMS/PopSource
+.code	
+	cmp clazzname, 'MMSPOPSource'
+	jne L1
+	push construct MMSPopSource
+	jmp L2
+L1:
+.uses
+	* from MMS/NNTPSource
+.code	
+	push construct MMSNNTPSource
+	jmp L2
+L3:
+	falloff
+L2:
+	pop r01
+	ret r01
+

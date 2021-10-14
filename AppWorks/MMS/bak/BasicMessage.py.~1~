@@ -1,0 +1,17 @@
+from etoffiutils import nequals
+
+class MMSMessage:
+	def __init__(self, msg, uidl, resp, octets):
+		self.msg    = msg
+		self.uidl   = uidl
+		self.resp   = resp
+		self.octets = octets
+		self.cached = {}
+	def GetHeader(self, lookfor):
+		lookfor     = lookfor.lower()
+		lookfor_len = len(lookfor)+2 # Assuming <headername> colon space <value>
+		for each_line in self.msg:
+			if nequals(each_line.lower(), lookfor):
+				return each_line[lookfor_len:]
+				
+		return None

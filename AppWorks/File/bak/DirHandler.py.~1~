@@ -1,0 +1,59 @@
+
+# AppWorks::File::iDirHandler
+class iDirHandler:
+	def getClassType(self):
+		return 'AppClass.DirHandler'
+		
+	def getRoot(self):
+		return self.root
+		
+	def canOpen(self, path, perm):
+		""" path:File.Path, perm:File.Perms -> bool"""
+		pass
+		
+	def enumerate(self, spec):
+		""" spec:String -> List<File.Desc> """
+		pass
+			
+	def enumerateFirstByName(self, spec):
+		""" spec:File.Name -> File.Desc """
+		pass
+	
+	def insert(self, desc):
+		""" -> bool """
+		pass
+		
+	def unlink(self, desc):
+		""" -> bool """
+		pass
+		
+	def open(self, desc, perms, flags):
+		""" -> File.Handle """
+		pass
+		
+	def reopen(self, handle, perms, flags):
+		""" -> File.Handle """
+		pass
+		
+	def close(self, handle):
+		""" -> bool """
+		pass
+		
+	def write(self, handle, data, size):
+		""" File.Handle ByteStream int -> int """
+		
+	def read(self, handle, size):
+		""" File.Handle int -> ByteStream """
+	
+	def seek(self, amt, dir, pos):
+		""" amt:uint dir:(*forward*, backward) pos:(beg, end, *cur*) """
+		pass
+		
+	def setParams(self, handle, params):
+		""" handle:File.Handle params:?a """
+		pass
+		
+	def handle(self, evt):
+		pass
+	
+	

@@ -1,0 +1,68 @@
+from AwxDBiServer import *
+from DBiValue import *
+
+def getQuoted(line):
+        i = 1
+        while line[i:i+1] != line[:1]:
+                if line[i:i-1] == '\\':
+                        continue
+                i = i + 1
+        return line[1:i], line[i+1:]
+
+def SplitLine(line):
+        import string
+        name = ''
+        value = ''
+
+        if line[:1] == '"':
+            	name, value = getQuoted(line)
+        else:
+            	while line[:1] not in (' ', '\t'):
+            		name = name + line[:1]
+            		line = line[1:]
+            		
+            	value = line[1:]
+
+        if value[:1] in ('"', "'"):
+                value = value[1:-1]
+#	else:
+#		value = value[1:]
+		
+	return (name, value)
+
+class RCDBiHandler:
+	RCEXT = '.rc'
+	RCSIG = None
+
+	def Begin(self, root):
+		if root[:2] == '~/':
+			Root = "%s%s%s" % (DBIROOT, root[2:], self.RCEXT)
+			s = open(Root, 'r')
+		else:
+			s = open(root, 'r')
+        
+		if self.RCSIG:
+			if s.readline() != self.RCSIG:
+				return
+
+		r = ''
+		if r == None: 
+			x = 2
+        	
+		linenum = 0 # one based!!!
+		while r != None:
+				line = s.readline()
+				if not line: break
+
+				linenum = linenum + 1
+                
+				if line[:-1] == '\\':
+					line[:-1] = ''
+					linenum = linenum - 1
+					continue
+
+				(name, value) = SplitLine(line[:-1])
+
+				newval = DBiValue(root+'/'+name, value, self, (root, linenum))
+				DBiServer.add(newval)
+

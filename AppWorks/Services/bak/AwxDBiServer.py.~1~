@@ -1,0 +1,123 @@
+import AppWorks.Util.DBiValue
+from etoffiutils import true, false, nequals
+from RCDBiHandler import RCDBiHandler
+
+class errNotFound(Exception):
+	pass
+class AwxDBiServer:
+	DBIROOT = 'q:/DBi/'
+	EnumFlat = 0
+	EnumRecursive = 1
+	
+	def enum(self, topkey, root='~/', kind=EnumFlat):
+##		print '%% enum ( %s %s ) ' % (topkey, root)
+		top = self.translatePath(topkey, root)
+##		print '%% enum ( %s %s ) ((%s))' % (topkey, root, top)
+		self.lock()
+		r = self.lockedlist
+		for each in self.handlers:
+			if each.canOpen(top):
+				each.Begin(top)
+				break
+		self.unlock()
+		return r
+
+	def getStr(self, path, root):
+##		print 99, path, root
+		search = self.translatePath(path, root)
+##		print 100, search
+		if self.entries.has_key(search):
+			return self.entries[search].getStr()
+		look = self.lookup(search)
+		if not look:
+			print search
+			raise errNotFound() ## TODO:
+		self.entries[search] = look
+		return look.getStr()
+	def getStrOrNil(self, path, root):
+		try:
+			return self.getStr(path, root)
+		except errNotFound:
+			return None
+	def translatePath(self, path, root):
+##		print 'UU', root, '\t', path
+		def _fix(root, path):
+			def replace_begin(instr, replacethis, withthis):
+				if nequals(instr, replacethis):
+					rv = withthis+instr[len(replacethis):]
+				else:
+					rv = instr
+				return rv
+			root = replace_begin(root, '~/', '/local/DBi/')
+			path = replace_begin(path, '~/', root or '/local/DBi/')
+##			path = replace_begin(path, './', root)
+			return root,path
+		root, path = _fix(root, path)
+		rv = ''
+		if not nequals(path, root):
+			if len(root): rv += root
+			if rv[-1:] != '/': rv += '/'
+		rv += path
+##		print 'translated path is', rv
+		return rv
+	def lookup(self, path_):
+		rv   = None
+		path = self.translatePath(path_, '~/')
+		AWX_DBI_NEWACTION = false
+		if AWX_DBI_NEWACTION == true:
+			b = progressiveParse(path, '/')
+			for parsePath in b:
+				if fileSystem.exists(parsePath):
+					h = self.handlerForPath(parsePath)
+					if h:
+						rv = h.getValue(path)
+					else:
+						self.log('No handler for path %s' % parsePath)
+		else:
+			for iterdata in self.handlers:
+##				print 'LPO',iterdata
+				if iterdata.canOpen(path):
+					## place iterdata at top of handler stack
+##					print self.entries
+					rv = iterdata.getValue(path)
+			## throws an exception in AbxLib (errNotFound)
+##		print '%% lookup (%s) -> %s' % (path, rv)
+		return rv
+
+	def lock(self):
+		self.locked = true
+
+	def unlock(self):
+		self.locked = false
+		self.lockedlist = []
+
+	def add(self, line):
+		self.entries[line.path]=line
+		if self.locked:
+			self.lockedlist.append(line)
+##		print line
+		
+	def __init__(self):
+		self.entries   = {}
+		self.locked = false
+		self.lockedlist = []
+		self.handlers = []
+		self.handlers.append(RCDBiHandler(self))
+		self.entries = {}
+		
+##_DBiServer = None
+#
+##def getDBiServer():
+##	global _DBiServer
+##	if _DBiServer == None:
+##		_DBiServer = AwxDBiServer()
+##	return _DBiServer
+#
+##DBiServer = getDBiServer()
+##print 'xxg ', `DBiServer`
+##print 'xgx ', `DBiServer.lockedlist`
+
+
+DBiServer = AwxDBiServer()
+
+#eof
