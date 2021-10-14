@@ -74,7 +74,7 @@ handler, dd, ff, login_handle = do_login ()
 
 ensure_directory_present('out')
 for n in range(1,10):
-	dd     = _Desc('/pop/%s-%s/msgnum/%d' % (server, user, n))
+	dd     = Desc('/pop/%s-%s/msgnum/%d' % (server, user, n))
 	handle = handler.open(dd, Perms.Read, ff)
 	try:
 		# dont delete until we know it written
