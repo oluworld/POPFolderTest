@@ -1,0 +1,105 @@
+<code object <module> at 80c0be0, file "__init__.py", line 1>
+	co_argcount 0
+	co_code '\177\001\000k\000\000l\001\000\001\177\003\000d\001\000Z\002\000\177\004\000d\002\000Z\003\000\177\006\000d\001\000Z\004\000\177\007\000d\002\000Z\005\000\177\011\000d\003\000\204\000\000Z\006\000\177\021\000e\002\000e\003\000e\004\000e\005\000e\006\000f\005\000Z\007\000d\000\000S'
+	co_consts (None, 1, 0, <code object MMSSourceFactory at 80d2b58, file "__init__.py", line 9>)
+	co_filename '__init__.py'
+	co_firstlineno 1
+	co_flags 0
+	co_lnotab '\012\002\011\001\011\002\011\001\011\002\014\010'
+	co_name '<module>'
+	co_names ('Error', '*', 'REMOVE_FROM_SERVER', 'LEAVE_ON_SERVER', 'CONNECT_MODE', 'TEST_MODE', 'MMSSourceFactory', '__Eall__')
+	co_nlocals 0
+	co_stacksize 5
+	co_varnames ()
+
+          0 SET_LINENO          1
+          3 IMPORT_NAME         0 (Error)
+          6 IMPORT_FROM         1 (*)
+          9 POP_TOP        
+
+         10 SET_LINENO          3
+         13 LOAD_CONST          1 (1)
+         16 STORE_NAME          2 (REMOVE_FROM_SERVER)
+
+         19 SET_LINENO          4
+         22 LOAD_CONST          2 (0)
+         25 STORE_NAME          3 (LEAVE_ON_SERVER)
+
+         28 SET_LINENO          6
+         31 LOAD_CONST          1 (1)
+         34 STORE_NAME          4 (CONNECT_MODE)
+
+         37 SET_LINENO          7
+         40 LOAD_CONST          2 (0)
+         43 STORE_NAME          5 (TEST_MODE)
+
+         46 SET_LINENO          9
+         49 LOAD_CONST          3 (<code object MMSSourceFactory at 80d2b58, file "__init__.py", line 9>)
+         52 MAKE_FUNCTION       0
+         55 STORE_NAME          6 (MMSSourceFactory)
+
+         58 SET_LINENO         17
+         61 LOAD_NAME           2 (REMOVE_FROM_SERVER)
+         64 LOAD_NAME           3 (LEAVE_ON_SERVER)
+         67 LOAD_NAME           4 (CONNECT_MODE)
+         70 LOAD_NAME           5 (TEST_MODE)
+         73 LOAD_NAME           6 (MMSSourceFactory)
+         76 BUILD_TUPLE         5
+         79 STORE_NAME          7 (__Eall__)
+         82 LOAD_CONST          0 (None)
+         85 RETURN_VALUE   
+<code object MMSSourceFactory at 80d2b58, file "__init__.py", line 9>
+	co_argcount 1
+	co_code '\177\011\000\177\012\000|\000\000d\000\000j\002\000o\030\000\001\177\013\000k\001\000l\002\000\001\177\014\000t\003\000\203\000\000Sn\001\000\001\177\015\000|\000\000d\001\000j\002\000o\030\000\001\177\016\000k\004\000l\002\000\001\177\017\000t\005\000\203\000\000Sn\001\000\001d\002\000S'
+	co_consts ('MMSPOPSource', 'MMSNNTPSource', None)
+	co_filename '__init__.py'
+	co_firstlineno 9
+	co_flags 3
+	co_lnotab '\003\001\020\001\012\001\016\001\020\001\012\001'
+	co_name 'MMSSourceFactory'
+	co_names ('clazzname', 'MMS.POPSource', '*', 'MMSPOPSource', 'MMS.NNTPSource', 'MMSNNTPSource')
+	co_nlocals 1
+	co_stacksize 2
+	co_varnames ('clazzname',)
+
+          0 SET_LINENO          9
+
+          3 SET_LINENO         10
+          6 LOAD_FAST           0 (clazzname)
+          9 LOAD_CONST          0 ('MMSPOPSource')
+         12 COMPARE_OP          2 (==)
+         15 JUMP_IF_FALSE      24 (to 42)
+         18 POP_TOP        
+
+         19 SET_LINENO         11
+         22 IMPORT_NAME         1 (MMS.POPSource)
+         25 IMPORT_FROM         2 (*)
+         28 POP_TOP        
+
+         29 SET_LINENO         12
+         32 LOAD_GLOBAL         3 (MMSPOPSource)
+         35 CALL_FUNCTION       0
+         38 RETURN_VALUE   
+         39 JUMP_FORWARD        1 (to 43)
+    >>   42 POP_TOP        
+
+    >>   43 SET_LINENO         13
+         46 LOAD_FAST           0 (clazzname)
+         49 LOAD_CONST          1 ('MMSNNTPSource')
+         52 COMPARE_OP          2 (==)
+         55 JUMP_IF_FALSE      24 (to 82)
+         58 POP_TOP        
+
+         59 SET_LINENO         14
+         62 IMPORT_NAME         4 (MMS.NNTPSource)
+         65 IMPORT_FROM         2 (*)
+         68 POP_TOP        
+
+         69 SET_LINENO         15
+         72 LOAD_GLOBAL         5 (MMSNNTPSource)
+         75 CALL_FUNCTION       0
+         78 RETURN_VALUE   
+         79 JUMP_FORWARD        1 (to 83)
+    >>   82 POP_TOP        
+    >>   83 LOAD_CONST          2 (None)
+         86 RETURN_VALUE   
